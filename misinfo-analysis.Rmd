@@ -8,9 +8,86 @@ output: html_document
 ```{r setup}
 library(dplyr)
 library(readr)
+library(ggplot2)
 
 misinfo_d <- read_csv(
   '../data/life-under-lockdown-wave2-extract.csv',
   show_col_types = FALSE)
+
+knowledge_levels <- c(
+  'Nothing at all',
+  'Not very much',
+  'A fair amount',
+  'A great deal'
+)
+
+misinfo_d <- misinfo_d %>%
+  mutate(
+    know_facebook = know_facebook %>%
+      ordered(
+        levels = knowledge_levels
+      )
+  )
 ```
+
+# Visualisation of dataset
+```{r visualise-age}
+misinfo_d %>%
+  ggplot(
+    aes(x = age)
+  ) +
+  geom_histogram(binwidth = 5)
+```
+
+```{r visualise-gender}
+misinfo_d %>%
+  ggplot(
+    aes(x = gender)
+  ) +
+  geom_bar()
+```
+
+```{r visualise-facebook-knowledge}
+misinfo_d %>%
+  ggplot(
+    aes(x = know_facebook)
+  ) +
+  geom_bar()
+```
+
+```{r visualise-beliefs}
+misinfo_d %>%
+  ggplot(
+    aes(x = beliefs)
+  ) +
+  geom_histogram(binwidth = 1)
+```
+
+# Analysis
+
+H1 We expect a relationship between gender and number of misinformation beliefs
+
+```{r gender-beliefs-table}
+misinfo_d %>%
+  group_by(gender) %>%
+  summarise(
+    n = n(),
+    M = mean(beliefs),
+    Mdn = median(beliefs),
+    SD = sd(beliefs)
+  )
+```
+
+```{r gender-beliefs-test}
+misinfo_d %>%
+  filter(gender != 'In another way') %>%
+  t.test(
+    beliefs ~ gender,
+    data = .
+  )
+```
+
+In the sample, men had more misinformation beliefs (M = 0.73, SD = 1.14) than women (M = 0.61, SD = 1.05), but this was not statistically significant, t(494.31) = -1.201, p = 0.230.
+
+
 
