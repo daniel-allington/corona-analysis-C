@@ -1,0 +1,16 @@
+---
+title: "Misinformation Analysis"
+author: "Daniel Allington"
+date: "2025-03-06"
+output: html_document
+---
+
+```{r setup}
+library(dplyr)
+library(readr)
+
+misinfo_d <- read_csv(
+  '../data/life-under-lockdown-wave2-extract.csv',
+  show_col_types = FALSE)
+```
+
