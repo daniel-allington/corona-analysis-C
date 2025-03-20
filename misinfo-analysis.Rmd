@@ -142,3 +142,62 @@ misinfo_d %>%
 
 In the sample, there is a statistically significant moderate positive correlation between relying on Facebook for knowledge about coronavirus and number of misinformation beliefs, rs(498) = .23, p < .001.
 
+
+
+## Linear model
+```{r dummy-coding}
+model_d <- misinfo_d %>%
+  mutate(
+    Female = as.numeric(gender == 'Female'),
+    High_Facebook = as.numeric(
+      know_facebook %in% c(
+        'A fair amount', 'A great deal')
+      )
+  )
+```
+
+```{r age-model}
+model_d %>%
+  lm(
+    beliefs ~ age,
+    data = .
+  ) %>%
+  summary
+```
+
+```{r facebook-model}
+model_d %>%
+  lm(
+    beliefs ~ High_Facebook,
+    data = .
+  ) %>%
+  summary
+```
+
+```{r gender-model}
+model_d %>%
+  lm(
+    beliefs ~ Female,
+    data = .
+  ) %>%
+  summary
+```
+
+```{r full-model}
+model_d %>%
+  lm(
+    beliefs ~ age + High_Facebook + Female,
+    data = .
+  ) %>%
+  summary
+```
+
+
+
+beliefs = 1.22 + -0.01 * age + 0.58 * High_Facebook + -0.17 * Female
+
+Female Facebook user: beliefs = 1.22 - age / 100 + 0.59 - 0.17
+Male Facebook user: beliefs = 1.22 - age / 100 + 0.59
+Female Facebook non-user: beliefs = 1.22 - age / 100 - 0.17
+Male Facebook non-user: beliefs = 1.22 - age / 100
+
